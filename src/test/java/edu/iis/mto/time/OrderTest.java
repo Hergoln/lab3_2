@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class OrderTest {
 
@@ -35,5 +36,21 @@ class OrderTest {
 
 		assertEquals(Order.State.CONFIRMED, testedOrder.getOrderState());
 	}
-	// TODO: czy metoda realize ustawia stan obiektu Order na State.REALIZED
+
+	@Test
+	public void metodaRealizePowinnaZmienicStanObiektuOrderNaREALIZED() {
+		testedOrder.submit(DateTime.now());
+		testedOrder.confirm(DateTime.now().plusHours(1));
+		testedOrder.realize();
+
+		assertEquals(Order.State.REALIZED, testedOrder.getOrderState());
+	}
+
+	@Test
+	public void metodaConfirmPowinnaRzucicWyjatkiemOrazZmienicStanNaCANCELLEDPrzyPodaniuDatyDalejNiz24HOdWykonaniaFunkcjiSubmit() {
+		testedOrder.submit(DateTime.now());
+
+		assertThrows(OrderExpiredException.class, () -> testedOrder.confirm(DateTime.now().plusHours(30)));
+		assertEquals(Order.State.CANCELLED, testedOrder.getOrderState());
+	}
 }
