@@ -22,7 +22,12 @@ class OrderTest {
 		assertEquals(Order.State.SUBMITTED, testedOrder.getOrderState());
 	}
 
-	// TODO: czy metoda addItem ustawia stan obiektu Order na State.CREATED
+	@Test
+	public void metodaAddItemPowinnaZmienicStanObiektuuOrderNaCREATED() {
+		testedOrder.addItem(new OrderItem());
+		assertEquals(Order.State.CREATED, testedOrder.getOrderState());
+	}
+
 	// TODO: czy metoda realize ustawia stan obiektu Order na State.REALIZED
 	// TODO: czy metoda confirm poprawnie ustawia stan obiektu i rzuca wyjątkiem
 }
