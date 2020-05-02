@@ -28,7 +28,6 @@ class OrderTest {
 		assertEquals(Order.State.CREATED, testedOrder.getOrderState());
 	}
 
-	// TODO: czy metoda confirm poprawnie ustawia stan obiektu i rzucac wyjątkiem
 	@Test
 	public void metodaConfirmPowinnaZmienicStanObiektuOrderNaCONFIRMED() {
 		testedOrder.submit(DateTime.now());
