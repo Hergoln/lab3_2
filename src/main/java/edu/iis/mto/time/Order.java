@@ -1,10 +1,11 @@
 package edu.iis.mto.time;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
+import org.joda.time.Hours;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.joda.time.DateTime;
-import org.joda.time.Hours;
 
 public class Order {
 
@@ -12,8 +13,9 @@ public class Order {
     private State orderState;
     private List<OrderItem> items = new ArrayList<OrderItem>();
     private DateTime subbmitionDate;
+    private DateTimeUtils.MillisProvider clock;
 
-    public Order() {
+    public Order(DateTimeUtils.MillisProvider clock) {
         orderState = State.CREATED;
     }
 
@@ -29,14 +31,13 @@ public class Order {
         requireState(State.CREATED);
 
         orderState = State.SUBMITTED;
-        subbmitionDate = new DateTime();
-
+        subbmitionDate = new DateTime(clock.getMillis());
     }
 
     public void confirm() {
         requireState(State.SUBMITTED);
-        int hoursElapsedAfterSubmittion = Hours.hoursBetween(subbmitionDate, new DateTime())
-                                               .getHours();
+        int hoursElapsedAfterSubmittion = Hours.hoursBetween(subbmitionDate, new DateTime(clock.getMillis()))
+                .getHours();
         if (hoursElapsedAfterSubmittion > VALID_PERIOD_HOURS) {
             orderState = State.CANCELLED;
             throw new OrderExpiredException();
@@ -60,9 +61,9 @@ public class Order {
         }
 
         throw new OrderStateException("order should be in state "
-                                      + allowedStates
-                                      + " to perform required  operation, but is in "
-                                      + orderState);
+                + allowedStates
+                + " to perform required  operation, but is in "
+                + orderState);
 
     }
 
