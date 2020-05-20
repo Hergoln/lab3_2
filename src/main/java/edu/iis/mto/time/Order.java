@@ -12,9 +12,15 @@ public class Order {
     private State orderState;
     private List<OrderItem> items = new ArrayList<OrderItem>();
     private DateTime subbmitionDate;
+    private Clock clock;
 
     public Order() {
         orderState = State.CREATED;
+        clock = DateTime::now;
+    }
+
+    public void withClock(Clock clock) {
+        this.clock = clock;
     }
 
     public void addItem(OrderItem item) {
@@ -25,16 +31,16 @@ public class Order {
 
     }
 
-    public void submit(DateTime timestamp) {
+    public void submit() {
         requireState(State.CREATED);
 
         orderState = State.SUBMITTED;
-        subbmitionDate = timestamp;
+        subbmitionDate = clock.now();
     }
 
-    public void confirm(DateTime timestamp) {
+    public void confirm() {
         requireState(State.SUBMITTED);
-        int hoursElapsedAfterSubmittion = Hours.hoursBetween(subbmitionDate, timestamp)
+        int hoursElapsedAfterSubmittion = Hours.hoursBetween(subbmitionDate, clock.now())
                 .getHours();
         if (hoursElapsedAfterSubmittion > VALID_PERIOD_HOURS) {
             orderState = State.CANCELLED;
